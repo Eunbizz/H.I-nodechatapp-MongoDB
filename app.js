@@ -6,7 +6,6 @@ var logger = require('morgan');
 var bcrypt = require('bcrypt');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var channelRouter = require('./routes/channel');
 
 // RESTful 데이터 요청과 응답처리 전용 라우팅
@@ -40,7 +39,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/chat', channelRouter);
 app.use('/api/member', memberAPIRouter);
 app.use('/api/channel', channelAPIRouter);
