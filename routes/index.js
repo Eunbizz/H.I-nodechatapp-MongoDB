@@ -25,7 +25,7 @@ router.post('/login', async(req, res)=>{
     if (member==null){
       resultMsg = '멤버 정보가 등록되지 않았습니다.'
     } else{
-      if(member.password == password){
+      if(member.member_password == password){
         res.redirect('/chat');
       } else{
         resultMsg = '암호가 일치하지 않습니다.'
@@ -58,7 +58,7 @@ router.post('/entry', async(req, res)=>{
     var member = {
       email,
       name,
-      password,
+      member_password:password,
       telephone,
       birthDate,
       entry_type_code:1,
@@ -87,7 +87,7 @@ router.post('/find', async(req, res)=>{
   try{
     var email = req.body.email;
 
-    var email = await Member.findOne({where:{email:email}});
+    var member = await Member.findOne({where:{email:email}});
 
     var resultMsg = '';
 
@@ -95,18 +95,18 @@ router.post('/find', async(req, res)=>{
       resultMsg = '등록되지 않은 이메일입니다.'
     } else{
       // db의 email과 내가 입력한 것이 같으면
-      if (email.email == email) {
-        console.log('메일찾기 완료 : ${email} 입니다.')
+      if (member.email == email) {
+        console.log(`메일찾기 완료 : ${email} 입니다.`)
         resultMsg = '메일찾기 완료'
       }
     }
     if (resultMsg !== ''){
-      res.render('find.ejs', {layout:"loginLayout"})
+      res.render('find.ejs', {resultMsg, layout:"authLayout"})
     }
   } catch (err) {
     console.error(err)
     res.status(500).send('Internal Server Error')
-  }s
+  }
   
 });
 
