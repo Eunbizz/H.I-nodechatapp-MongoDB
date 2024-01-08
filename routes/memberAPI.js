@@ -5,11 +5,10 @@ var express = require('express');
 var router = express.Router();
 
 var Member = require('../schemas/member')
-const bcrypt = require('bcrypt');
 
 
 // Get all members
-router.get('/all', async(req, res)=>{
+router.get('/all', async(req, res, next)=>{
     try {
         var members = await Member.find();
         res.json(members);
@@ -21,27 +20,18 @@ router.get('/all', async(req, res)=>{
 
 
 router.post('/login', async (req, res, next) => {
-
-    var loginData = {
-        email: req.body.email,
-        member_password: req.body.password
-    };
+    const { email, password } = req.body;
 
     try {
-        var user = await Member.findOne({
-            email: loginData.email
-        });
+        const user = await Member.findOne({ email });
 
         if (!user) {
             return res.json({ message: "이메일이나 비밀번호가 올바르지 않습니다." });
         }
 
-        // 비밀번호 비교
-        const passwordVal = await bcrypt.compare(loginData.member_password, user.member_password);
-
-        if (passwordVal) {
+        if (password === user.member_password) {
             // 로그인 성공
-            res.json({ message: "로그인 성공", user: user });
+            res.json({ message: "로그인 성공", user });
         } else {
             // 비밀번호 불일치
             res.json({ message: "이메일이나 비밀번호가 올바르지 않습니다." });
@@ -49,12 +39,12 @@ router.post('/login', async (req, res, next) => {
 
     } catch (error) {
         console.log(error);
-        res.json({ message: "로그인에 실패하였습니다.", error: error });
+        res.json({ message: "Member not Login", error });
     }
 });
 
 // Create a new member
-router.post('/entry', async(req, res)=>{
+router.post('/entry', async(req, res, next)=>{
 
     var memberData = {
         email: req.body.email,
@@ -88,10 +78,35 @@ router.post('/entry', async(req, res)=>{
     }
 });
 
-// Modify an existing member
-router.post('/modify', async (req, res) => {
+// find member
+router.post('/find', async (req, res, next) => {
+    const emailData = req.body.email;
 
-    const member_id = req.body.member_id;
+    try {
+        // trim: 문자열의 양 끝에 있는 공백(스페이스, 탭, 줄바꿈)을 제거하는 JavaScript의 문자열 메소드
+        if (!emailData || emailData.trim() === "") {
+            console.log('이메일을 입력해주세요');
+            return res.status(400).json({ message: "이메일을 입력해주세요" });
+        }
+
+        const findEmail = await Member.findOne({ email: emailData });
+
+        if (findEmail) {
+            res.json({ message: "Member found", member: findEmail });
+        } else {
+            res.json({ message: "Member not found" });
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Member not found", error: error });
+    }
+});
+
+// Modify an existing member
+router.post('/modify', async (req, res, next) => {
+
+    const memberId = req.body.member_id;
 
     var memberData = {
         email: req.body.email,
@@ -103,10 +118,9 @@ router.post('/modify', async (req, res) => {
         edit_member_id: 1
     };
 
-    var member = {member_id: member_id}
-    
     try {
-        var result = await Member.updateOne(memberData, member);
+        var result = await Member.updateOne({member_id:memberId}, memberData);
+        res.json(result);
         console.log(result, '수정완료');
 
     } catch (error) {
@@ -115,24 +129,36 @@ router.post('/modify', async (req, res) => {
     }
 });
 
-
 // Delete a member
 router.post('/delete', async(req, res) =>{
 
-    const memberId = req.body.member_id;
+    const memberId = req.query.id;
 
+    try {
+        var result = await Member.deleteOne({member_id: memberId});
+        res.json(result);
+        console.log(result, "삭제완료");
+        
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ message: "Member not deleted", error: error });
+    }
 
     res.json({ message: "member deleted" });
 });
 
 // Get a single member by ID
-// router.get('/:mid', async(req, res) =>{
-//     var memberId = parseInt(req.params.mid, 10); // 10진수 정수로 변환
+router.get('/:mid', async(req, res) =>{
+    var memberId = parseInt(req.params.mid, 10); // 10진수 정수로 변환
 
-//     var members = await getMembersData();
-//     var member = members.find(m => m.member_id === memberId);
+    try{
+        var members = await Member.findOne({where:{member_id:memberId}});
+        res.json({members});
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ message: "Member not findOne", error: error });
+    }
 
-//     res.json({ member});
-// });
+});
 
 module.exports = router;
