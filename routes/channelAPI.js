@@ -56,6 +56,7 @@ router.post('/modify/:id', async(req, res) =>{
         var regMemberId = req.body.regMemberId;
 
         // 특정 필드를 업데이트 하도록 $set
+        // 특정 필드를 업데이트하거나 새로운 필드 추가할 때 사용
         var updateFields = {
             $set: {
                 category_code: categoryCode,
@@ -76,7 +77,7 @@ router.post('/modify/:id', async(req, res) =>{
 });
 
 // Delete a channel
-router.post('/delete/:id', async(req, res) =>{
+router.delete('/delete/:id', async(req, res) =>{
     try {
         var channelId = req.params.id;
 
@@ -86,7 +87,7 @@ router.post('/delete/:id', async(req, res) =>{
         res.json({ deletedChannel });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: '내부 서버 오류' });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -101,7 +102,7 @@ router.get('/:cid', async(req, res) =>{
 
     }catch (error) {
         console.error(error);
-        res.status(500).json({ error: '내부 서버 오류' });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
