@@ -8,8 +8,8 @@ const connect = () => {
 
     //몽고DB연결정보를 설정합니다.
 
-    mongoose.connect('mongodb://robin:11qqaa..@localhost:27017/admin', {
-        dbName: 'teamChat_0108',
+    mongoose.connect('mongodb://lee:GYzz001020!!@127.0.0.1:27017/admin', {
+        dbName: 'modu_chat',
     }, (error) => {
         if (error) {
             console.log('몽고디비 연결 에러', error);
