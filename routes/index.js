@@ -79,6 +79,22 @@ router.post("/checkEmail", async (req, res) => {
   try {
     var email = req.body.email;
     var member = await Member.findOne({ where: { email: email } });
+    var name = req.body.name;
+    var password = req.body.password;
+    var telephone = req.body.telephone;
+    var birthDate = req.body.birthDate;
+
+    var member = {
+      email,
+      name,
+      member_password:password,
+      telephone,
+      birthDate,
+      entry_type_code:1,
+      use_state_code:1,
+      reg_date:Date.now()
+    }
+
 
     var resultMsg = "";
 
