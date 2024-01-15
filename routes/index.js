@@ -76,11 +76,9 @@ router.post("/entry", async (req, res) => {
 });
 
 router.post("/checkEmail", async (req, res) => {
-	try {
-		var email = req.body.email;
-		var member = await Member.findOne({ where: { email: email } });
-
-		var resultMsg = "";
+  try {
+    var email = req.body.email;
+    var member = await Member.findOne({ where: { email: email } });
 
 		if (email == "") {
 			resultMsg = "empty";
