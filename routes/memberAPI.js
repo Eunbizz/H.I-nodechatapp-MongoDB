@@ -79,6 +79,7 @@ router.post('/entry', async(req, res, next)=>{
 });
 
 // find member
+// nodemailer 사용해보기
 router.post('/find', async (req, res, next) => {
     const emailData = req.body.email;
 
@@ -118,6 +119,8 @@ router.post('/modify', async (req, res, next) => {
         edit_member_id: 1
     };
 
+    // members.updateOne({ member_id: 4 }, { '$set': { edit_member_id: 1, edit_date: new Date("Mon, 08 Jan 2024 06:53:25 GMT"), telephone: '010-2222-3333', name: '이름수정하기', email: 'bbb1111@naver.com' }}, {})
+
     try {
         var result = await Member.updateOne({member_id:memberId}, memberData);
         res.json(result);
@@ -132,7 +135,7 @@ router.post('/modify', async (req, res, next) => {
 // Delete a member
 router.post('/delete', async(req, res) =>{
 
-    const memberId = req.query.id;
+    const memberId = req.body.member_id;
 
     try {
         var result = await Member.deleteOne({member_id: memberId});
@@ -143,9 +146,8 @@ router.post('/delete', async(req, res) =>{
         console.log(error);
         res.status(500).json({ message: "Member not deleted", error: error });
     }
-
-    res.json({ message: "member deleted" });
 });
+
 
 // Get a single member by ID
 router.get('/:mid', async(req, res) =>{
