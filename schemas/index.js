@@ -7,7 +7,7 @@ const connect = () => {
     }
 
     //몽고DB연결정보를 설정합니다.
-    mongoose.connect('mongodb://lee:GYzz001020!!@127.0.0.1:27017/admin', {
+    mongoose.connect('', {
         dbName: 'modu_chat',
     }, (error) => {
         if (error) {
@@ -29,6 +29,6 @@ mongoose.connection.on('disconnected', () => {
 
 
 //회원정보 콜렉션 모델을 참조합니다.
-require('./member.js');
+// require('./member.js');
 
 module.exports = connect;

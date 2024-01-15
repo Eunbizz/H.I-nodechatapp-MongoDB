@@ -53,7 +53,7 @@ router.post("/entry", async (req, res) => {
 		var member_password = req.body.member_password;
 		var telephone = req.body.telephone;
 		var birth_date = req.body.birth_date;
-    var profile_img_path = req.body.profile_img_path;
+		var profile_img_path = req.body.profile_img_path;
 
 		var member = {
 			email,
@@ -61,8 +61,8 @@ router.post("/entry", async (req, res) => {
 			member_password,
 			telephone,
 			birth_date,
-      profile_img_path,
-      entry_type_code: 1,
+			profile_img_path,
+			entry_type_code: 1,
 			reg_member_id: 1,
 			use_state_code: 1,
 			reg_date: Date.now(),
@@ -76,24 +76,24 @@ router.post("/entry", async (req, res) => {
 });
 
 router.post("/checkEmail", async (req, res) => {
-  try {
-    var email = req.body.email;
-    var member = await Member.findOne({ where: { email: email } });
+	try {
+		var email = req.body.email;
+		var member = await Member.findOne({ where: { email: email } });
 
-    var resultMsg = "";
+		var resultMsg = "";
 
-    if (email == "") {
-      resultMsg = "empty";
-    } else if (member.email == email) {
-      resultMsg = "exist";
-    } else{
-      resultMsg = "valid";
-    }
+		if (email == "") {
+			resultMsg = "empty";
+		} else if (member.email == email) {
+			resultMsg = "exist";
+		} else {
+			resultMsg = "valid";
+		}
 
-    res.json({ resultMsg });
-  } catch (err) {
-    res.status(500).send("Internal Server Error");
-  }
+		res.json({ resultMsg });
+	} catch (err) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 // 암호 찾기 웹페이지 요청 및 응답
@@ -107,33 +107,31 @@ router.post("/find", async (req, res) => {
 		var email = req.body.email;
 
 		var member = await Member.findOne({ where: { email: email } });
-    var resultMsg = "";
-		if (member.email == email){
-      res.render("reset_password", {layout: "authLayout", email, resultMsg})
-    }
-    else{
-      resultMsg = "등록되지 않은 이메일입니다.";
-      res.render("find", { resultMsg, email, layout: "authLayout" });
-    }
-  }catch (err) {
-    res.status(500).send("Internal Server Error");
-  }
+		var resultMsg = "";
+		if (member.email == email) {
+			res.render("reset_password", { layout: "authLayout", email, resultMsg });
+		} else {
+			resultMsg = "등록되지 않은 이메일입니다.";
+			res.render("find", { resultMsg, email, layout: "authLayout" });
+		}
+	} catch (err) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 router.post("/reset_password", async (req, res) => {
-  var email = req.body.email;
-  var member_password = req.body.member_password;
-  var member = await Member.findOne({ where: { email: email } });
-  var resultMsg = "";
-  if (member.member_password == member_password){
-    resultMsg = "이전과 동일한 암호입니다.";
-    res.render("reset_password", {layout: "authLayout", email, resultMsg})
-  }
-  else{
-    member.member_password = member_password;
-    await member.save();
-    res.redirect("/");
-  }
+	var email = req.body.email;
+	var member_password = req.body.member_password;
+	var member = await Member.findOne({ where: { email: email } });
+	var resultMsg = "";
+	if (member.member_password == member_password) {
+		resultMsg = "이전과 동일한 암호입니다.";
+		res.render("reset_password", { layout: "authLayout", email, resultMsg });
+	} else {
+		member.member_password = member_password;
+		await member.save();
+		res.redirect("/");
+	}
 });
 
 module.exports = router;
